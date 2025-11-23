@@ -186,6 +186,57 @@
             <p class="subtitle">Comprehensive testing of specifications, invariants, and verification outcomes</p>
         </header>
 
+        <!-- Task 1: Absolute Value -->
+        <div class="task">
+            <div class="task-header">
+                <h2 class="task-title">Task 1: Absolute Value Function</h2>
+            </div>
+
+            <div class="spec-section">
+                <div class="spec-title">Final Working Implementation</div>
+                <div class="spec-content">
+                    <div class="code">
+method Abs(x: int) returns (x': int)
+  ensures x' >= 0
+  ensures x' == x || x' == -x
+{
+  if x >= 0 {
+    x' := x;
+  } else {
+    x' := -x;
+  }
+}
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-case success">
+                <span class="status status-success">VERIFICATION SUCCESS</span>
+                <div class="spec-title">Test Case: Positive number</div>
+                <div class="code">var result := Abs(5); assert result == 5;</div>
+            </div>
+
+            <div class="test-case success">
+                <span class="status status-success">VERIFICATION SUCCESS</span>
+                <div class="spec-title">Test Case: Negative number</div>
+                <div class="code">var result := Abs(-7); assert result == 7;</div>
+            </div>
+
+            <div class="test-case success">
+                <span class="status status-success">VERIFICATION SUCCESS</span>
+                <div class="spec-title">Test Case: Zero</div>
+                <div class="code">var result := Abs(0); assert result == 0;</div>
+            </div>
+
+            <div class="test-case failure">
+                <span class="status status-failure">VERIFICATION FAILED</span>
+                <div class="spec-title">Failed Attempt: Missing postcondition</div>
+                <div class="code">ensures x' >= 0  // Only non-negativity, no relation to input</div>
+                <div class="error-msg">Error: Postcondition might not hold</div>
+                <div class="fix">Added: ensures x' == x || x' == -x</div>
+            </div>
+        </div>
+
         <!-- Task 2: Find First Negative -->
         <div class="task">
             <div class="task-header">
@@ -196,22 +247,22 @@
                 <div class="spec-title">Final Working Implementation</div>
                 <div class="spec-content">
                     <div class="code">
-method FindFirstNegative(a: array&lt;int&gt;) returns (index: int)<br>
-  requires a != null<br>
-  ensures index == -1 || (0 &lt;= index &lt; a.Length && a[index] &lt; 0)<br>
-  ensures index == -1 ==> forall i | 0 &lt;= i &lt; a.Length :: a[i] &gt;= 0<br>
-  ensures index != -1 ==> forall j | 0 &lt;= j &lt; index :: a[j] &gt;= 0<br>
-{<br>
-  index := 0;<br>
-  while index &lt; a.Length<br>
-    invariant 0 &lt;= index &lt;= a.Length<br>
-    invariant forall j | 0 &lt;= j &lt; index :: a[j] &gt;= 0<br>
-    decreases a.Length - index<br>
-  {<br>
-    if a[index] &lt; 0 { return; }<br>
-    index := index + 1;<br>
-  }<br>
-  index := -1;<br>
+method FindFirstNegative(a: array&lt;int&gt;) returns (index: int)
+  requires a != null
+  ensures index == -1 || (0 &lt;= index &lt; a.Length && a[index] &lt; 0)
+  ensures index == -1 ==> forall i | 0 &lt;= i &lt; a.Length :: a[i] &gt;= 0
+  ensures index != -1 ==> forall j | 0 &lt;= j &lt; index :: a[j] &gt;= 0
+{
+  index := 0;
+  while index &lt; a.Length
+    invariant 0 &lt;= index &lt;= a.Length
+    invariant forall j | 0 &lt;= j &lt; index :: a[j] &gt;= 0
+    decreases a.Length - index
+  {
+    if a[index] &lt; 0 { return; }
+    index := index + 1;
+  }
+  index := -1;
 }
                     </div>
                 </div>
@@ -250,27 +301,27 @@ method FindFirstNegative(a: array&lt;int&gt;) returns (index: int)<br>
                 <div class="spec-title">Final Working Implementation</div>
                 <div class="spec-content">
                     <div class="code">
-method Factorial(n: int) returns (result: int)<br>
-  requires n &gt;= 0<br>
-  ensures result == factorial(n)<br>
-{<br>
-  result := 1;<br>
-  var i := 1;<br>
-  while i &lt;= n<br>
-    invariant 1 &lt;= i &lt;= n+1<br>
-    invariant result == factorial(i-1)<br>
-    decreases n - i<br>
-  {<br>
-    result := result * i;<br>
-    i := i + 1;<br>
-  }<br>
-}<br>
-<br>
-function factorial(n: int): int<br>
-  requires n &gt;= 0<br>
-  decreases n<br>
-{<br>
-  if n == 0 then 1 else n * factorial(n-1)<br>
+method Factorial(n: int) returns (result: int)
+  requires n &gt;= 0
+  ensures result == factorial(n)
+{
+  result := 1;
+  var i := 1;
+  while i &lt;= n
+    invariant 1 &lt;= i &lt;= n+1
+    invariant result == factorial(i-1)
+    decreases n - i
+  {
+    result := result * i;
+    i := i + 1;
+  }
+}
+
+function factorial(n: int): int
+  requires n &gt;= 0
+  decreases n
+{
+  if n == 0 then 1 else n * factorial(n-1)
 }
                     </div>
                 </div>
@@ -309,38 +360,38 @@ function factorial(n: int): int<br>
                 <div class="spec-title">Final Working Implementation</div>
                 <div class="spec-content">
                     <div class="code">
-method Tribonacci(n: int) returns (result: int)<br>
-  requires n &gt;= 0<br>
-  ensures result == tribonacci(n)<br>
-{<br>
-  if n == 0 { result := 0; }<br>
-  else if n == 1 { result := 1; }<br>
-  else if n == 2 { result := 1; }<br>
-  else {<br>
-    var a := 0; var b := 1; var c := 1; var i := 3;<br>
-    while i &lt;= n<br>
-      invariant 3 &lt;= i &lt;= n+1<br>
-      invariant a == tribonacci(i-3)<br>
-      invariant b == tribonacci(i-2)<br>
-      invariant c == tribonacci(i-1)<br>
-      decreases n - i<br>
-    {<br>
-      result := a + b + c;<br>
-      a := b; b := c; c := result;<br>
-      i := i + 1;<br>
-    }<br>
-    result := c;<br>
-  }<br>
-}<br>
-<br>
-function tribonacci(n: int): int<br>
-  requires n &gt;= 0<br>
-  decreases n<br>
-{<br>
-  if n == 0 then 0<br>
-  else if n == 1 then 1<br>
-  else if n == 2 then 1<br>
-  else tribonacci(n-1) + tribonacci(n-2) + tribonacci(n-3)<br>
+method Tribonacci(n: int) returns (result: int)
+  requires n &gt;= 0
+  ensures result == tribonacci(n)
+{
+  if n == 0 { result := 0; }
+  else if n == 1 { result := 1; }
+  else if n == 2 { result := 1; }
+  else {
+    var a := 0; var b := 1; var c := 1; var i := 3;
+    while i &lt;= n
+      invariant 3 &lt;= i &lt;= n+1
+      invariant a == tribonacci(i-3)
+      invariant b == tribonacci(i-2)
+      invariant c == tribonacci(i-1)
+      decreases n - i
+    {
+      result := a + b + c;
+      a := b; b := c; c := result;
+      i := i + 1;
+    }
+    result := c;
+  }
+}
+
+function tribonacci(n: int): int
+  requires n &gt;= 0
+  decreases n
+{
+  if n == 0 then 0
+  else if n == 1 then 1
+  else if n == 2 then 1
+  else tribonacci(n-1) + tribonacci(n-2) + tribonacci(n-3)
 }
                     </div>
                 </div>
@@ -374,15 +425,15 @@ function tribonacci(n: int): int<br>
             <h2>Verification Summary</h2>
             <div class="summary-grid">
                 <div class="summary-item">
-                    <div class="summary-number">3</div>
+                    <div class="summary-number">4</div>
                     <div class="summary-label">Tasks Completed</div>
                 </div>
                 <div class="summary-item">
-                    <div class="summary-number">12</div>
+                    <div class="summary-number">15</div>
                     <div class="summary-label">Test Cases</div>
                 </div>
                 <div class="summary-item">
-                    <div class="summary-number">6</div>
+                    <div class="summary-number">7</div>
                     <div class="summary-label">Verification Failures</div>
                 </div>
                 <div class="summary-item">
@@ -398,6 +449,7 @@ function tribonacci(n: int): int<br>
                 <li>Pure functions should be used in specifications, not method calls</li>
                 <li>Base cases must be handled explicitly in iterative implementations</li>
                 <li>Decreases clauses are crucial for proving termination</li>
+                <li>Simple functions still require complete specifications</li>
             </ul>
         </div>
     </div>
